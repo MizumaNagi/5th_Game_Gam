@@ -8,7 +8,8 @@ public class ClickToGetWorldPos : MonoBehaviour
     [SerializeField] private float pointLength;
     [SerializeField] private LineRenderer lineRenderer;
 
-    private int targetLayer = 1 << 5;
+
+    private int targetLayer = 1 << 6;
     private float remPointLength = 0f;
     private float renderLineWidth = 0.2f;
     private Vector3 beforeFrameCursorPos = Vector3.positiveInfinity;

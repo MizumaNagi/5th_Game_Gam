@@ -5,7 +5,8 @@ using UnityEngine;
 public class DrawMesh : MonoBehaviour
 {
     [SerializeField, Min(0.1f)] private float blockHalfHeights;
-    [SerializeField] private GameObject emptyObjPrefab;
+    [SerializeField] private GameObject childBlockPrefab;
+    [SerializeField] private Transform drawObjsParent;
 
     private List<GameObject> lineList = new List<GameObject>();
 
@@ -19,7 +20,9 @@ public class DrawMesh : MonoBehaviour
         if (Input.GetMouseButtonUp(0))
         {
             if (getPosScript.ClickPosList.Count <= 1) return;
-            lineList.Add(DrawNewLine(getPosScript.ClickPosList.ToArray()));
+            GameObject newLineObj = DrawNewLine(getPosScript.ClickPosList.ToArray());
+            lineList.Add(newLineObj);
+            newLineObj.transform.SetParent(drawObjsParent);
             getPosScript.ResetClickPos();
 
             /*
@@ -33,6 +36,11 @@ public class DrawMesh : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// ライン生成
+    /// </summary>
+    /// <param name="posArr"></param>
+    /// <returns></returns>
     private GameObject DrawNewLine(Vector3[] posArr)
     {
         if (posArr.Length <= 1) return null;
@@ -48,9 +56,15 @@ public class DrawMesh : MonoBehaviour
         return parent;
     }
 
+    /// <summary>
+    /// ラインを形成するブロック作成
+    /// </summary>
+    /// <param name="beginPos"></param>
+    /// <param name="endPos"></param>
+    /// <returns></returns>
     private GameObject DrawNewBlock(Vector3 beginPos, Vector3 endPos)
     {
-        GameObject obj = Instantiate(emptyObjPrefab);
+        GameObject obj = Instantiate(childBlockPrefab);
         MeshFilter meshFilter = obj.GetComponent<MeshFilter>();
         obj.GetComponent<MeshRenderer>();
         MeshCollider meshCollider = obj.GetComponent<MeshCollider>();
@@ -74,6 +88,7 @@ public class DrawMesh : MonoBehaviour
         //vertices[4] = beginPos + Quaternion.Euler(0, 0, angle) * new Vector3(-blockHalfHeights, 0, 0) + Vector3.right;
         //vertices[5] = endPos + Quaternion.Euler(0, 0, angle) * new Vector3(-blockHalfHeights, 0, 0) + Vector3.right;
         //vertices[6] = beginPos + Quaternion.Euler(0, 0, angle) * new Vector3(-blockHalfHeights, 0, 0) + new Vector3(0, 1, 1);
+
         //vertices[7] = endPos + Quaternion.Euler(0, 0, angle) * new Vector3(-blockHalfHeights, 0, 0) + new Vector3(0, 1, 1);
 
         vertices[0] = beginPos + new Vector3(-blockHalfHeights, 0, 0);
